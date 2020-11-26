@@ -1,11 +1,12 @@
 package com.aditya.mapdemo;
 
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.FragmentActivity;
-
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentActivity;
 
 import com.aditya.mapdemo.Api.ApiClient;
 import com.aditya.mapdemo.Api.ApiInterface;
@@ -15,6 +16,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -107,7 +110,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MarkerOptions markerOptions = new MarkerOptions();
 //        LatLng sydney = new LatLng(lat, longs);
         mMap.addMarker(new MarkerOptions().position(latLng).title("Dont know"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        Circle circle = mMap.addCircle(new CircleOptions()
+                .center(latLng)
+                .radius(10000)
+                .strokeColor(Color.RED)
+                .fillColor(Color.BLUE));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,500));
     }
 
 }
