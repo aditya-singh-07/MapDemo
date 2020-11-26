@@ -30,8 +30,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     public static ApiInterface apiInterface;
     List<Mapmodel> maplist;
-    Double lat;
-    Double longs;
+//    Double lat;
+//    Double longs;
+    int locationCount = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -59,18 +60,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        locationCount++;
+
+
         Call<users> mapcall=apiInterface.getNewarrival();
         mapcall.enqueue(new Callback<users>() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onResponse(Call<users> call, Response<users> response) {
-                lat=Double.parseDouble(response.body().getNewarrival().get(1).getLatitude());
-                longs=Double.parseDouble(response.body().getNewarrival().get(1).getLongitude());
-                Log.i("lat->" + lat,"Longs->" + longs);
-                LatLng sydney = new LatLng(lat, longs);
+//                lat=Double.parseDouble(response.body().getNewarrival().get(1).getLatitude());
+//                longs=Double.parseDouble(response.body().getNewarrival().get(1).getLongitude());
+//                Log.i("lat->" + lat,"Longs->" + longs);
+//                LatLng sydney = new LatLng(lat, longs);
+                maplist=response.body().getNewarrival();
+                maplist.forEach(new Consumer<Mapmodel>() {
+                    @Override
+                    public void accept(Mapmodel mapmodel) {
+                            String lat = "";
+                            String lng = "";
 
-                mMap.addMarker(new MarkerOptions().position(sydney).title("Dont know"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                                lat=mapmodel.getLatitude();
+                                lng=mapmodel.getLongitude();
+                                // Drawing marker on the map
+                                drawMarker(new LatLng(Double.parseDouble(lat), Double.parseDouble(lng)));
+
+
+
+                    }
+                });
+
+
             }
 
             @Override
@@ -82,6 +101,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Add a marker in Sydney and move the camera
 //        LatLng sydney = new LatLng(19.075983, 72.877655);
 
-
     }
+
+    private void drawMarker(LatLng latLng) {
+        MarkerOptions markerOptions = new MarkerOptions();
+//        LatLng sydney = new LatLng(lat, longs);
+        mMap.addMarker(new MarkerOptions().position(latLng).title("Dont know"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+    }
+
 }
